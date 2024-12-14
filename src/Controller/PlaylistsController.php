@@ -36,7 +36,14 @@ class PlaylistsController extends AbstractController {
      */
     private $categorieRepository;
 
-   
+    public function filtrenbformation($ordre) : Response{
+        $playlists = $this->playlistRepository->findAllOrdeByNbFormations($ordre);
+        $categories = $this->categorieRepository->findAll();
+        return $this->render(self::TEMPLATE_PLAYLISTS, [
+            'playlists' => $playlists,
+            'categories' => $categories
+        ]);
+    }
 
     function __construct(PlaylistRepository $playlistRepository,
             CategorieRepository $categorieRepository,
@@ -68,6 +75,7 @@ class PlaylistsController extends AbstractController {
                 break;
             case "nbformations":
                 $playlists = $this->playlistRepository->findAllOrdeByNbFormations($ordre);
+                break;
 
         }
         $categories = $this->categorieRepository->findAll();
