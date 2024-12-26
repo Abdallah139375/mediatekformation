@@ -1,0 +1,16 @@
+{% extends "baseadminformations.html.twig" %}
+
+{% block body %}
+    <h2>Nouvelle formation : </h2>
+       {{ form_start(formformation) }}
+       
+       {{ form_row(formformation.publishedAt) }}
+       {{ form_row(formformation.title) }}
+       {{ form_row(formformation.description) }}
+       {{ form_row(formformation.videoId) }}
+       {{ form_row(formformation.playlist) }}
+       {{ form_row(formformation.categories) }}
+       
+       {{ form_end(formformation) }}
+        
+{% endblock %}
