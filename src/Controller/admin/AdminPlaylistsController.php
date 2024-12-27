@@ -43,17 +43,24 @@ class AdminPlaylistsController extends AbstractController {
         ]);
     }
 
-     #[Route('/admin/suppr/{id}', name: 'Playlist.suppr')]
+     #[Route('/admin/playlists/suppr/{id}', name: 'Playlist.suppr')]
     public function suppr(Playlist $playlists ,int $id): Response{
         $playlist = $this->playlistRepository->find($id);
         $this ->playlistRepository->remove($playlist,true);
-        return $this->redirectToRoute('adminplaylist');
+        return $this->redirectToRoute('adminplaylists');
     }
 
-     #[Route('/admin/edit/{id}', name: 'Playlist.edit')]
+     #[Route('/admin/playlists/edit/{id}', name: 'Playlist.edit')]
      public function edit (int $id,Request $request): Response{
          $playlist = $this->playlistRepository->find($id);
          $formPlaylist = $this->createForm(PlaylistType::class, $playlist);
+
+         $formPlaylist->handleRequest($request);
+         if($formPlaylist -> isSubmitted() && $formPlaylist ->isValid()){
+             $this->playlistRepository->add($playlist,true);
+             return $this->redirectToRoute('adminplaylists');
+         }
+
          return $this->render("admin/Playlist.edit.html.twig", [
              'playlist' => $playlist,
              'formplaylist' => $formPlaylist ->createView()
@@ -78,4 +85,21 @@ class AdminPlaylistsController extends AbstractController {
             'table' => $table
         ]);
     }
+
+     #[Route('/admin/playlists/ajout', name: 'Lesplaylists.ajout')]
+      public function ajout (Request $request): Response{
+         $playlist = new Playlist();
+
+         $formPlaylist = $this->createForm(PlaylistType::class,$playlist);
+
+         $formPlaylist->handleRequest($request);
+         if($formPlaylist -> isSubmitted() && $formPlaylist ->isValid()){
+             $this->playlistRepository->add($playlist,true);
+             return $this->redirectToRoute('adminplaylists');
+         }
+         return $this->render("admin/Playlists.ajout.html.twig", [
+            'playlist' => $playlist,
+            'formplaylist' => $formPlaylist->createview()
+         ]);
+     }
 }
