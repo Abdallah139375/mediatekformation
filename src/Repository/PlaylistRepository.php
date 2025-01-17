@@ -34,22 +34,22 @@ class PlaylistRepository extends ServiceEntityRepository
      * @param type $ordre
      * @return Playlist[]
      */
-    public function findAllOrderByName($ordre): array{
+    public function findAllOrderByName($champ, $ordre): array{
         return $this->createQueryBuilder('p')
                 ->leftjoin('p.formations', 'f')
                 ->groupBy('p.id')
-                ->orderBy('p.name', $ordre)
+                ->orderBy('p.'.$champ, $ordre)
                 ->getQuery()
                 ->getResult();
     }
 
-    public function findAllOrdeByNbFormations ($ordre): array{
-         return $this->createQueryBuilder('p')
-                ->leftjoin('p.formations', 'f')
-                ->groupBy('p.id')
-                ->orderBy('count(f.title)', $ordre)
-                ->getQuery()
-                ->getResult();
+    public function findAllOrderByNbFormations($ordre): array{
+        return $this->createQueryBuilder('p')
+        ->leftjoin('p.formations', 'f')
+        ->groupBy('p.id')
+        ->orderBy('count(f.title)', $ordre)
+        ->getQuery()
+        ->getResult();
     }
 
     /**
@@ -62,7 +62,7 @@ class PlaylistRepository extends ServiceEntityRepository
      */
     public function findByContainValue($champ, $valeur, $table=""): array{
         if($valeur==""){
-            return $this->findAllOrderByName('ASC');
+            return $this->findAllOrderByName('name','ASC');
         }
         if($table==""){
             return $this->createQueryBuilder('p')

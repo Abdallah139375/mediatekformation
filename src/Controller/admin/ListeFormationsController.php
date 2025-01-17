@@ -41,7 +41,7 @@ class ListeFormationsController extends AbstractController {
     }
 
 
-     #[Route('/admin', name: 'formations')]
+     #[Route('/admin', name: 'admin.formations')]
     public function index(): Response{
 
         $formations = $this->formationRepository->findAll();
@@ -51,14 +51,14 @@ class ListeFormationsController extends AbstractController {
         ]);
     }
 
-    #[Route('/admin/suppr/{id}', name: 'lesformations.suppr')]
+    #[Route('/admin/suppr/{id}', name: 'admin.formations.suppr')]
     public function suppr(Formation $formation ,int $id): Response{
         $formation = $this->formationRepository->find($id);
         $this ->formationRepository->remove($formation,true);
-        return $this->redirectToRoute('formations');
+        return $this->redirectToRoute('admin.formations');
     }
 
-     #[Route('/admin/edit/{id}', name: 'lesformations.edit')]
+     #[Route('/admin/edit/{id}', name: 'admin.formations.edit')]
      public function edit (int $id,Request $request): Response{
          $formation = $this->formationRepository->find($id);
          $formformation = $this->createForm(FormationType::class,$formation);
@@ -66,14 +66,14 @@ class ListeFormationsController extends AbstractController {
          $formformation->handlerequest($request);
          if($formformation -> isSubmitted() && $formformation ->isValid()){
              $this->formationRepository->add($formation);
-             return $this->redirectToRoute('formations');
+             return $this->redirectToRoute('admin.formations');
          }
          return $this->render("admin/formation.edit.html.twig", [
             'formation' => $formation,
             'formformation' => $formformation->createview()
          ]);
      }
-     #[Route('/admin/ajout', name: 'Lesformations.ajout')]
+     #[Route('/admin/ajout', name: 'admin.formations.ajout')]
       public function ajout (Request $request): Response{
          $formation = new Formation();
 
@@ -82,13 +82,23 @@ class ListeFormationsController extends AbstractController {
          $formformation->handlerequest($request);
          if($formformation -> isSubmitted() && $formformation ->isValid()){
              $this->formationRepository->add($formation,true);
-             return $this->redirectToRoute('formations');
+             return $this->redirectToRoute('admin.formations');
          }
          return $this->render("admin/formation.ajout.html.twig", [
             'formation' => $formation,
             'formformation' => $formformation->createview()
          ]);
      }
+
+     #[Route('/amin/formations/recherche/{champ}/{table}', name: 'admin.formations.findallcontain')]
+    public function findAllContain($champ, Request $request, $table=""): Response{
+        $valeur = $request->get("recherche");
+        $formations = $this->formationRepository->findByContainValue($champ, $valeur, $table);
+        return $this->render("admin/lesFormations.html.twig", [
+            'formations' => $formations,
+
+        ]);
+    }
 
 
 }

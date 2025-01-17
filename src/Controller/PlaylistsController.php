@@ -36,14 +36,6 @@ class PlaylistsController extends AbstractController {
      */
     private $categorieRepository;
 
-    public function filtrenbformation($ordre) : Response{
-        $playlists = $this->playlistRepository->findAllOrdeByNbFormations($ordre);
-        $categories = $this->categorieRepository->findAll();
-        return $this->render(self::TEMPLATE_PLAYLISTS, [
-            'playlists' => $playlists,
-            'categories' => $categories
-        ]);
-    }
 
     function __construct(PlaylistRepository $playlistRepository,
             CategorieRepository $categorieRepository,
@@ -53,13 +45,14 @@ class PlaylistsController extends AbstractController {
         $this->formationRepository = $formationRespository;
     }
 
+
     /**
      * @Route("/playlists", name="playlists")
      * @return Response
      */
     #[Route('/playlists', name: 'playlists')]
     public function index(): Response{
-        $playlists = $this->playlistRepository->findAllOrderByName('ASC');
+        $playlists = $this->playlistRepository->findAllOrderByName('name','ASC');
         $categories = $this->categorieRepository->findAll();
         return $this->render(self::TEMPLATE_PLAYLISTS, [
             'playlists' => $playlists,
@@ -67,16 +60,25 @@ class PlaylistsController extends AbstractController {
         ]);
     }
 
+    public function filtrenbformation($ordre) : Response{
+        $playlists = $this->playlistRepository->findAllOrdeByNbFormations($ordre);
+        $categories = $this->categorieRepository->findAll();
+        return $this->render(self::TEMPLATE_PLAYLISTS, [
+            'playlists' => $playlists,
+            'categories' => $categories
+        ]);
+    }
+
+
     #[Route('/playlists/tri/{champ}/{ordre}', name: 'playlists.sort')]
     public function sort($champ, $ordre): Response{
-        switch($champ){
-            case "name":
-                $playlists = $this->playlistRepository->findAllOrderByName($ordre);
-                break;
-            case "nbformations":
-                $playlists = $this->playlistRepository->findAllOrdeByNbFormations($ordre);
-                break;
-
+       switch($champ){
+           case "name":
+            $playlists = $this->playlistRepository->findAllOrderByName($champ, $ordre);
+            break;
+           case "nbformations":
+            $playlists = $this->playlistRepository->findAllOrderByNbFormations($ordre);
+            break;
         }
         $categories = $this->categorieRepository->findAll();
         return $this->render(self::TEMPLATE_PLAYLISTS, [
